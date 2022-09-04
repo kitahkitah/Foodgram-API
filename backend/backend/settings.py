@@ -1,14 +1,11 @@
 from os import getenv
 from pathlib import Path
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 SECRET_KEY = getenv('SECRET_KEY', 'nonsecure')
-DEBUG = getenv('DEBUG', False)
+DEBUG = getenv('DEBUG', 'True')
 ALLOWED_HOSTS = getenv('ALLOWED_HOSTS', '127.0.0.1 [::]').split()
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -17,8 +14,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'api',
+    'users',
 ]
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -30,9 +29,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
 ROOT_URLCONF = 'backend.urls'
-
 
 TEMPLATES = [
     {
@@ -50,9 +47,7 @@ TEMPLATES = [
     },
 ]
 
-
 WSGI_APPLICATION = 'backend.wsgi.application'
-
 
 DATABASES = {
     'default': {
@@ -61,10 +56,9 @@ DATABASES = {
         'USER': getenv('POSTGRES_USER'),
         'PASSWORD': getenv('POSTGRES_PASSWORD'),
         'HOST': getenv('DB_HOST'),
-        'PORT': getenv('DB_PORT')
-    }
+        'PORT': getenv('DB_PORT'),
+    },
 }
-
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -81,14 +75,21 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 LANGUAGE_CODE = 'ru-ru'
 TIME_ZONE = 'Europe/Moscow'
 USE_I18N = True
 USE_TZ = True
 
-
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
+# Переопределение модели User
+AUTH_USER_MODEL = 'users.User'
 
 STATIC_URL = 'static/'
+STATIS_ROOT = BASE_DIR / 'static/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+    'PAGE_SIZE_QUERY_PARAM': 'limit',
+}
