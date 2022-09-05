@@ -1,7 +1,6 @@
 """Сериализаторы для модели и эндпоинтов пользователей."""
 
-from django.contrib.auth import authenticate
-from django.contrib.auth.password_validation import validate_password as pass_valid
+from django.contrib.auth.password_validation import validate_password as valid_pass
 from rest_framework import serializers
 
 from .models import User
@@ -18,23 +17,21 @@ class UserSerializer(serializers.ModelSerializer):
                   'last_name', 'is_subscribed', 'password')
         extra_kwargs = {'password': {'write_only': True}}
 
-    # переопределить!
+    # TODO: Переопределить!
     def get_is_subscribed(self, object):
         """Проверить наличие подписки на пользователя."""
         return False
 
-    def validate_username(self, username):
-        """
-        Валидировать поле username.
-        Значение не должно быть равно 'me'.
-        """
-        if username == 'me':
-            raise serializers.ValidationError({'username': 'Имя "me" запрещено!'})
-        return username
-
     def validate_password(self, password):
-        pass_valid(password, self.instance)
+        """Валидировать пароль встроенными валидаторами Django."""
+        valid_pass(password, self.instance)
         return password
+
+    def validate_username(self, username):
+        """Валидировать username. Значение не должно быть равно 'me'."""
+        if username != 'me':
+            return username
+        raise serializers.ValidationError({'username': ['Имя "me" запрещено!']})
 
 
 class PasswordSerializer(serializers.Serializer):
@@ -51,16 +48,10 @@ class PasswordSerializer(serializers.Serializer):
         style={'input_type': 'password'}
     )
 
-    def validate_current_password(self, current_password):
-        """
-        Валидировать действующий пароль.
-        Значение должно соответствовать текущему паролю.
-        """
-        if not self.user.check_password(current_password):
-            raise serializers.ValidationError(
-                {'current_password': 'Неверный текущий пароль!'}
-            )
-        return current_password
+    def validate_new_password(self, new_password):
+        """Валидировать новый пароль встроенными валидаторами Django."""
+        valid_pass(new_password, self.instance)
+        return new_password
 
 
 class TokenSerializer(serializers.Serializer):
@@ -73,20 +64,3 @@ class TokenSerializer(serializers.Serializer):
         required=True,
         style={'input_type': 'password'}
     )
-
-    def validate(self, attrs):
-        email, password = attrs.get('email'), attrs.get('password')
-        # self.user = authenticate(
-        #     request=self.context.get('request'),
-        #     email=email, password=password
-        # )
-        # if not self.user:
-        #     self.user = User.objects.filter(email=email).first()
-        # if self.user and self.user.is_active:
-        #     return attrs
-        self.user = authenticate(email=email, password=password)
-        if self.user and self.user.is_active:
-            return attrs
-        raise serializers.ValidationError(
-            {'message': 'Неверные аутентификационные данные'}
-        )
