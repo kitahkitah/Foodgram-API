@@ -1,13 +1,18 @@
+"""Эндпоинты приложения с основной логикой API."""
+
 from django.urls import include, path
 from rest_framework.routers import SimpleRouter
 
+from users.views import TokenDestroyView, TokenObtainView
 from users.views import UserViewSet
 
 app_name = 'api'
 
 router = SimpleRouter()
-router.register('users', UserViewSet, basename='users')
+router.register(r'users', UserViewSet, basename='users')
 
 urlpatterns = [
-    path('/', include(router.urls)),
+    path('auth/token/login/', TokenObtainView.as_view(), name='token_obtain'),
+    path('auth/token/logout/', TokenDestroyView.as_view(), name='token_destroy'),
+    path('', include(router.urls)),
 ]

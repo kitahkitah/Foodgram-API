@@ -1,3 +1,5 @@
+"""Настройки приложения с основной логикой API."""
+
 from django.apps import AppConfig
 
 
