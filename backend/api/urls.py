@@ -3,7 +3,7 @@
 from django.urls import include, path
 from rest_framework.routers import SimpleRouter
 
-from recipes.views import TagViewSet
+from recipes.views import IngredientViewSet, TagViewSet
 from users.views import TokenDestroyView, TokenObtainView, UserViewSet
 
 app_name = 'api'
@@ -11,6 +11,7 @@ app_name = 'api'
 router = SimpleRouter()
 router.register(r'users', UserViewSet, basename='users')
 router.register(r'tags', TagViewSet, basename='tags')
+router.register(r'ingredients', IngredientViewSet, basename='ingredients')
 
 urlpatterns = [
     path('auth/token/login/', TokenObtainView.as_view(), name='token_obtain'),
