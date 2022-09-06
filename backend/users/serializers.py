@@ -37,12 +37,12 @@ class UserSerializer(serializers.ModelSerializer):
 class PasswordSerializer(serializers.Serializer):
     """Сериализатор для смены пароля пользователя."""
 
-    new_password = serializers.CharField(
+    current_password = serializers.CharField(
         max_length=150,
         required=True,
         style={'input_type': 'password'}
     )
-    current_password = serializers.CharField(
+    new_password = serializers.CharField(
         max_length=150,
         required=True,
         style={'input_type': 'password'}

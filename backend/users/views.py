@@ -1,4 +1,4 @@
-"""Views для модели и эндпоинтов пользователей."""
+"""Views для эндпоинтов пользователей."""
 
 from django.contrib.auth import update_session_auth_hash
 from rest_framework.authtoken.models import Token
