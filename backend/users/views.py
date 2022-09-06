@@ -22,7 +22,7 @@ class UserViewSet(CreateModelMixin, ListModelMixin,
 
     permission_classes = (AllowAny,)
     serializer_class = UserSerializer
-    queryset = User.objects.all()
+    queryset = User.objects.only("email", "username", "first_name", "last_name").all()
 
     def perform_create(self, serializer):
         """Присвоение зашифрованного пароля пользователю при отправке POST запроса."""

@@ -3,7 +3,7 @@
 from django.contrib.auth.password_validation import validate_password as valid_pass
 from rest_framework import serializers
 
-from .models import User
+from .models import Subscription, User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -17,10 +17,15 @@ class UserSerializer(serializers.ModelSerializer):
                   'last_name', 'is_subscribed', 'password')
         extra_kwargs = {'password': {'write_only': True}}
 
-    # TODO: Переопределить!
     def get_is_subscribed(self, object):
         """Проверить наличие подписки на пользователя."""
-        return False
+        request = self.context.get("request")
+        if request.user.is_anonymous:
+            return False
+
+        return Subscription.objects.filter(
+            author=object, subscriber=request.user
+        ).exists()
 
     def validate_password(self, password):
         """Валидировать пароль встроенными валидаторами Django."""
@@ -40,12 +45,12 @@ class PasswordSerializer(serializers.Serializer):
     current_password = serializers.CharField(
         max_length=150,
         required=True,
-        style={'input_type': 'password'}
+        style={'input_type': 'password'},
     )
     new_password = serializers.CharField(
         max_length=150,
         required=True,
-        style={'input_type': 'password'}
+        style={'input_type': 'password'},
     )
 
     def validate_new_password(self, new_password):
@@ -62,5 +67,5 @@ class TokenSerializer(serializers.Serializer):
         max_length=150,
         write_only=True,
         required=True,
-        style={'input_type': 'password'}
+        style={'input_type': 'password'},
     )

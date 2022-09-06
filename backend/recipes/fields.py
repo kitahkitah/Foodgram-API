@@ -8,7 +8,7 @@ from django.db import models
 HEX_COLOR_VALIDATOR = RegexValidator(
     re_compile('^#[A-Fa-f0-9]{6}$'),
     'Введите валидный цвет в формате HEX (#000000)',
-    'invalid'
+    'invalid',
 )
 
 

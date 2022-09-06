@@ -15,6 +15,8 @@ class Tag(models.Model):
 
     class Meta:
         ordering = ('name',)
+        verbose_name = 'тег'
+        verbose_name_plural = 'теги'
 
     def __str__(self):
         return f'{self.name} ({self.slug})'
@@ -32,9 +34,9 @@ class Ingredient(models.Model):
 
     class Meta:
         ordering = ('name',)
-        indexes = [
-            models.Index(fields=['name'])
-        ]
+        verbose_name = 'ингредиент'
+        verbose_name_plural = 'ингредиенты'
+        indexes = (models.Index(fields=['name']),)
 
     def __str__(self):
         return f'{self.name} ({self.measurement_unit})'

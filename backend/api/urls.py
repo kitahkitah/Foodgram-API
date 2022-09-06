@@ -9,9 +9,10 @@ from users.views import TokenDestroyView, TokenObtainView, UserViewSet
 app_name = 'api'
 
 router = SimpleRouter()
-router.register(r'users', UserViewSet, basename='users')
-router.register(r'tags', TagViewSet, basename='tags')
 router.register(r'ingredients', IngredientViewSet, basename='ingredients')
+router.register(r'tags', TagViewSet, basename='tags')
+# router.register(r'users/subscriptions', SubscriptionViewSet, basename='subscriptions')
+router.register(r'users', UserViewSet, basename='users')
 
 urlpatterns = [
     path('auth/token/login/', TokenObtainView.as_view(), name='token_obtain'),
