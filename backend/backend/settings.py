@@ -84,11 +84,16 @@ USE_TZ = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
-# Переопределение модели User
 AUTH_USER_MODEL = 'users.User'
 
 STATIC_URL = 'static/'
 STATIS_ROOT = BASE_DIR / 'static/'
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media/'
+
+# CORS_ORIGIN_ALLOW_ALL = False
+# CORS_URLS_REGEX = r'api/'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
@@ -98,4 +103,23 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
     'DEFAULT_PAGINATION_CLASS': 'backend.pagination.LimitPagePagination',
+    'DEFAULT_THROTTLE_RATES': {
+        'user': '4/day',
+    },
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    },
 }

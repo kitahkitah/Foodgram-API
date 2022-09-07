@@ -2,10 +2,10 @@
 
 from rest_framework.filters import SearchFilter
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
-from rest_framework.viewsets import GenericViewSet
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
-from .models import Ingredient, Tag
-from .serializers import IngredientSerializer, TagSerializer
+from .models import Ingredient, Recipe, Tag
+from .serializers import IngredientSerializer, RecipeSerializer, TagSerializer
 
 
 class TagViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
@@ -22,3 +22,11 @@ class IngredientViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
     search_fields = ('^name',)
     serializer_class = IngredientSerializer
     queryset = Ingredient.objects.all()
+
+
+class RecipeViewSet(ModelViewSet):
+    """Вьюсет для эндпоинтов с рецептами."""
+
+    http_method_names = ['GET', 'POST', 'PATCH', 'DELETE']
+    serializer_class = RecipeSerializer
+    queryset = Recipe.objects.all()

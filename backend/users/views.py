@@ -9,6 +9,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from rest_framework.status import HTTP_204_NO_CONTENT
+from rest_framework.throttling import UserRateThrottle
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
@@ -38,7 +39,7 @@ class UserViewSet(CreateModelMixin, ListModelMixin,
         return Response(serializer.data)
 
     @action(['POST'], False, permission_classes=(IsAuthenticated,),
-            serializer_class=PasswordSerializer)
+            serializer_class=PasswordSerializer, throttle_classes=(UserRateThrottle,))
     def set_password(self, request):
         """Изменить пароль текущего пользователя."""
         serializer = self.get_serializer(data=request.data)
@@ -59,6 +60,7 @@ class TokenObtainView(ObtainAuthToken):
 
     permission_classes = (AllowAny,)
     serializer_class = TokenSerializer
+    throttle_classes = (UserRateThrottle,)
 
     def post(self, request, *args, **kwargs):
         """Получение токена пользователя при отправке POST запроса."""

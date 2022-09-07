@@ -3,15 +3,15 @@
 from django.urls import include, path
 from rest_framework.routers import SimpleRouter
 
-from recipes.views import IngredientViewSet, TagViewSet
+from recipes.views import IngredientViewSet, RecipeViewSet, TagViewSet
 from users.views import TokenDestroyView, TokenObtainView, UserViewSet
 
 app_name = 'api'
 
 router = SimpleRouter()
 router.register(r'ingredients', IngredientViewSet, basename='ingredients')
+router.register(r'recipes', RecipeViewSet, basename='recipes')
 router.register(r'tags', TagViewSet, basename='tags')
-# router.register(r'users/subscriptions', SubscriptionViewSet, basename='subscriptions')
 router.register(r'users', UserViewSet, basename='users')
 
 urlpatterns = [
