@@ -22,7 +22,6 @@ class UserSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
         if request.user.is_anonymous:
             return False
-
         return Subscription.objects.filter(
             author=object, subscriber=request.user
         ).exists()

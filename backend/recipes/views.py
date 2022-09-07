@@ -27,6 +27,6 @@ class IngredientViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
 class RecipeViewSet(ModelViewSet):
     """Вьюсет для эндпоинтов с рецептами."""
 
-    http_method_names = ['GET', 'POST', 'PATCH', 'DELETE']
+    http_method_names = ['get', 'post', 'patch', 'delete']
     serializer_class = RecipeSerializer
     queryset = Recipe.objects.all()
