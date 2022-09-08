@@ -40,8 +40,7 @@ class RecipeViewSet(ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         ingredients = serializer.validated_data.pop('recipeingredientamount_set')
-        tags = serializer.validated_data.pop('tags')
-        created_recipe = serializer.save(author=request.user, tags=tags)
+        created_recipe = serializer.save(author=request.user)
 
         ingredients_for_recipe = [
             RecipeIngredientAmount(
@@ -53,9 +52,6 @@ class RecipeViewSet(ModelViewSet):
         created_recipe.recipeingredientamount_set.bulk_create(ingredients_for_recipe)
 
         headers = self.get_success_headers(serializer.data)
-        tags = TagSerializer(data=tags, many=True)
-        tags.is_valid(raise_exception=False)
-        serializer._data['tags'] = tags.data
         return Response(serializer.data, status=HTTP_201_CREATED, headers=headers)
 
     # def update(self, request, *args, **kwargs):

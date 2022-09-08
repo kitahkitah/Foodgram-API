@@ -36,3 +36,14 @@ class Base64ImageField(serializers.ImageField):
             data = ContentFile(b64decode(imgstr), name=str(uuid4()) + '.' + ext)
 
         return super().to_internal_value(data)
+
+
+class ModelPKRelatedField(serializers.PrimaryKeyRelatedField):
+    """Поле сериализатора PKRelated с репрезентацией модели."""
+
+    def __init__(self, **kwargs):
+        self.serializer = kwargs.pop('serializer')
+        super().__init__(**kwargs)
+
+    def to_representation(self, value):
+        return self.serializer(value, context=self.context).data

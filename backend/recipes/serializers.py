@@ -3,7 +3,7 @@
 from rest_framework import serializers
 
 from users.serializers import UserSerializer
-from .fields import Base64ImageField
+from .fields import Base64ImageField, ModelPKRelatedField
 from .models import Ingredient, Recipe, RecipeIngredientAmount, Tag
 
 
@@ -50,20 +50,17 @@ class RecipeSerializer(serializers.ModelSerializer):
     )
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
-    tags = TagSerializer(required=True, many=True)
+    tags = ModelPKRelatedField(
+        required=True,
+        many=True,
+        queryset=Tag.objects.all(),
+        serializer=TagSerializer,
+    )
 
     class Meta:
         model = Recipe
         fields = ('id', 'tags', 'author', 'ingredients', 'is_favorited',
                   'is_in_shopping_cart', 'name', 'image', 'text', 'cooking_time')
-
-    def __init__(self, *args, **kwargs):
-        super(RecipeSerializer, self).__init__(*args, **kwargs)
-        if self.context['request'].method in ['POST', 'PATCH']:
-            self.fields['tags'] = serializers.PrimaryKeyRelatedField(
-                queryset=Tag.objects.all(),
-                many=True
-            )
 
     def get_is_favorited(self, object):
         """Проверить наличие рецепта в избранных пользователя."""
