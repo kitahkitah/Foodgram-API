@@ -27,8 +27,11 @@ class RecipeIngredientAmountSerializer(serializers.ModelSerializer):
     """Сериализатор для связки рецепта, ингредиента и количества."""
 
     id = serializers.IntegerField(source='ingredient.id')
-    name = serializers.CharField(source='ingredient.name')
-    measurement_unit = serializers.CharField(source='ingredient.measurement_unit')
+    name = serializers.CharField(source='ingredient.name', read_only=True)
+    measurement_unit = serializers.CharField(
+        source='ingredient.measurement_unit',
+        read_only=True
+    )
 
     class Meta:
         model = RecipeIngredientAmount
@@ -42,17 +45,25 @@ class RecipeSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
     ingredients = RecipeIngredientAmountSerializer(
         source='recipeingredientamount_set',
-        read_only=True,
+        required=True,
         many=True
     )
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
-    tags = TagSerializer(read_only=True, many=True)
+    tags = TagSerializer(required=True, many=True)
 
     class Meta:
         model = Recipe
         fields = ('id', 'tags', 'author', 'ingredients', 'is_favorited',
                   'is_in_shopping_cart', 'name', 'image', 'text', 'cooking_time')
+
+    def __init__(self, *args, **kwargs):
+        super(RecipeSerializer, self).__init__(*args, **kwargs)
+        if self.context['request'].method in ['POST', 'PATCH']:
+            self.fields['tags'] = serializers.PrimaryKeyRelatedField(
+                queryset=Tag.objects.all(),
+                many=True
+            )
 
     def get_is_favorited(self, object):
         """Проверить наличие рецепта в избранных пользователя."""

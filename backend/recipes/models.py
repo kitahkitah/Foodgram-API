@@ -10,7 +10,7 @@ from .fields import HEXColor
 class Tag(models.Model):
     """Модель тега для рецепта."""
 
-    color = HEXColor('цвет в HEX', blank=True, unique=True)
+    color = HEXColor('цвет в HEX', blank=False, unique=True)
     name = models.CharField('название', max_length=200,
                             blank=False, unique=True)
     slug = models.SlugField('уникальный slug', max_length=200,
@@ -125,4 +125,4 @@ class RecipeIngredientAmount(models.Model):
         )
 
     def __str__(self):
-        return f'Ингредиент "{self.ingredient}" к репецту "{self.recipe}"'
+        return f'Ингредиент "{self.ingredient}" для "{self.recipe}"/{self.amount}'

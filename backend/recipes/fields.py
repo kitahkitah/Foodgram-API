@@ -2,6 +2,7 @@
 
 from base64 import b64decode
 from re import compile as re_compile
+from uuid import uuid4
 
 from django.core.files.base import ContentFile
 from django.core.validators import RegexValidator
@@ -32,6 +33,6 @@ class Base64ImageField(serializers.ImageField):
         if isinstance(data, str) and data.startswith('data:image'):
             extension, imgstr = data.split(';base64,')
             ext = extension.split('/')[-1]
-            data = ContentFile(b64decode(imgstr), name='temp.' + ext)
+            data = ContentFile(b64decode(imgstr), name=str(uuid4()) + '.' + ext)
 
         return super().to_internal_value(data)
