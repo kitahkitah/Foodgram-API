@@ -1,4 +1,4 @@
-"""Сериализаторы для модели и эндпоинтов тегов, ингредиентов, рецептов."""
+"""Сериализаторы для моделей и эндпоинтов тегов, ингредиентов, рецептов."""
 
 from rest_framework import serializers
 
@@ -51,10 +51,10 @@ class RecipeSerializer(serializers.ModelSerializer):
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
     tags = ModelPKRelatedField(
-        required=True,
-        many=True,
         queryset=Tag.objects.all(),
         serializer=TagSerializer,
+        required=True,
+        many=True,
     )
 
     class Meta:

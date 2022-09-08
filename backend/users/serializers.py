@@ -9,6 +9,10 @@ from .models import Subscription, User
 class UserSerializer(serializers.ModelSerializer):
     """Сериализатор модели пользователя."""
 
+    default_error_messages = {
+        'invalid': 'Имя "me" запрещено!',
+    }
+
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -35,11 +39,15 @@ class UserSerializer(serializers.ModelSerializer):
         """Валидировать username. Значение не должно быть равно 'me'."""
         if username != 'me':
             return username
-        raise serializers.ValidationError({'username': ['Имя "me" запрещено!']})
+        self.fail('invalid')
 
 
 class PasswordSerializer(serializers.Serializer):
     """Сериализатор для смены пароля пользователя."""
+
+    default_error_messages = {
+        'incorrect_password': 'Неверный текущий пароль!',
+    }
 
     current_password = serializers.CharField(
         max_length=150,
@@ -51,6 +59,12 @@ class PasswordSerializer(serializers.Serializer):
         required=True,
         style={'input_type': 'password'},
     )
+
+    def validate_current_password(self, current_password):
+        """Сравнить текущий пароль с введённым."""
+        if not self.context['request'].user.check_password(current_password):
+            raise self.fail('incorrect_password')
+        return current_password
 
     def validate_new_password(self, new_password):
         """Валидировать новый пароль встроенными валидаторами Django."""

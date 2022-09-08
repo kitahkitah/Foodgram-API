@@ -21,7 +21,6 @@ class HEXColor(models.CharField):
 
     def __init__(self, *args, **kwargs):
         super(HEXColor, self).__init__(*args, **kwargs)
-
         self.max_length = 7
         self.validators.append(HEX_COLOR_VALIDATOR)
 
