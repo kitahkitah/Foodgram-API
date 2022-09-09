@@ -1,11 +1,13 @@
 """Views для эндпоинтов тегов, ингредиентов, рецептов."""
 
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
+from .commons import change_object_status
 from .filters import AuthorTagsFilterSet
 from .models import Ingredient, Recipe, RecipeIngredientAmount, Tag
 from .permissions import IsAuthorOrGetObjectOnly
@@ -61,3 +63,17 @@ class RecipeViewSet(ModelViewSet):
             ) for ingredient in ingredients
         ]
         recipe.recipeingredientamount_set.bulk_create(ingredients_for_recipe)
+
+    @action(['POST', 'DELETE'], detail=True)
+    def favorite(self, request, pk):
+        """Изменить статус рецепта (избранный)."""
+        instance = self.get_object()
+        response = change_object_status(instance, request, 'favorited_by')
+        return response
+
+    @action(['POST', 'DELETE'], detail=True)
+    def shopping_cart(self, request, pk):
+        """Изменить статус рецепта (избранный)."""
+        instance = self.get_object()
+        response = change_object_status(instance, request, 'in_shopping_cart_of')
+        return response

@@ -32,13 +32,13 @@ class UserViewSet(CreateModelMixin, ListModelMixin,
         instance.set_password(password)
         instance.save()
 
-    @action(['GET'], False, permission_classes=(IsAuthenticated,))
+    @action(['GET'], detail=False, permission_classes=(IsAuthenticated,))
     def me(self, request):
         """Вернуть текущего пользователя."""
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
 
-    @action(['POST'], False, permission_classes=(IsAuthenticated,),
+    @action(['POST'], detail=False, permission_classes=(IsAuthenticated,),
             serializer_class=PasswordSerializer, throttle_classes=(UserRateThrottle,))
     def set_password(self, request):
         """Изменить пароль текущего пользователя."""
