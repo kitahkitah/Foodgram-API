@@ -1,10 +1,12 @@
 """Views для эндпоинтов тегов, ингредиентов, рецептов."""
 
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
+from .filters import AuthorTagsFilterSet
 from .models import Ingredient, Recipe, RecipeIngredientAmount, Tag
 from .permissions import IsAuthorOrGetObjectOnly
 from .serializers import IngredientSerializer, RecipeSerializer, TagSerializer
@@ -29,7 +31,9 @@ class IngredientViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
 class RecipeViewSet(ModelViewSet):
     """Вьюсет для эндпоинтов с рецептами."""
 
-    http_method_names = ['get', 'post', 'patch', 'delete']
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = AuthorTagsFilterSet
+    http_method_names = ('get', 'post', 'patch', 'delete')
     permission_classes = (IsAuthenticatedOrReadOnly, IsAuthorOrGetObjectOnly)
     serializer_class = RecipeSerializer
     queryset = Recipe.objects.all()

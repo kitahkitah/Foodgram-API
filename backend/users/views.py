@@ -81,5 +81,5 @@ class TokenDestroyView(APIView):
 
     def post(self, request):
         """Удаление токена пользователя при отправке POST запроса."""
-        Token.objects.filter(user=request.user).delete()
+        Token.objects.get(user=request.user).delete()
         return Response(status=HTTP_204_NO_CONTENT)
