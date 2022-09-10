@@ -136,3 +136,4 @@ dmypy.json
 setup.cfg
 drafts.py
 /backend/media/
+ingredients.csv

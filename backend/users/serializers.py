@@ -3,7 +3,18 @@
 from django.contrib.auth.password_validation import validate_password as valid_pass
 from rest_framework import serializers
 
-from .models import Subscription, User
+from recipes.models import Recipe
+from .models import User
+
+
+class PartialRecipeSerializer(serializers.ModelSerializer):
+    """Сериализатор для частичной модели рецепта
+    для представления внутри эндпоинта с подписками.
+    """
+
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -14,21 +25,37 @@ class UserSerializer(serializers.ModelSerializer):
     }
 
     is_subscribed = serializers.SerializerMethodField()
+    recipes = serializers.SerializerMethodField()
+    recipes_count = serializers.IntegerField(source='recipe_set.count', read_only=True)
 
     class Meta:
         model = User
-        fields = ('email', 'id', 'username', 'first_name',
-                  'last_name', 'is_subscribed', 'password')
+        fields = ('email', 'id', 'username', 'first_name', 'last_name',
+                  'is_subscribed', 'password', 'recipes', 'recipes_count')
         extra_kwargs = {'password': {'write_only': True}}
 
-    def get_is_subscribed(self, object):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        view = self.context.get('view', False)
+        if not view or view.name != 'Subscriptions':
+            self.fields.pop('recipes')
+            self.fields.pop('recipes_count')
+
+    def get_is_subscribed(self, obj):
         """Проверить наличие подписки на пользователя."""
-        request = self.context.get("request")
+        request = self.context.get('request')
         if request.user.is_anonymous:
             return False
-        return Subscription.objects.filter(
-            author=object, subscriber=request.user
-        ).exists()
+        return request.user.subscribed_to.filter(id=obj.id).exists()
+
+    def get_recipes(self, obj):
+        """Получить ограниченное числов рецептов на странице с подписками."""
+        limit = self.context['request'].query_params.get('recipes_limit', False)
+        queryset = obj.recipe_set.all()
+        if limit:
+            queryset = queryset[:int(limit)]
+        return PartialRecipeSerializer(queryset, many=True).data
 
     def validate_password(self, password):
         """Валидировать пароль встроенными валидаторами Django."""
@@ -75,7 +102,7 @@ class PasswordSerializer(serializers.Serializer):
 class TokenSerializer(serializers.Serializer):
     """Сериализатор для получения токена пользователя."""
 
-    email = serializers.EmailField(write_only=True, max_length=150)
+    email = serializers.EmailField(max_length=150, write_only=True)
     password = serializers.CharField(
         max_length=150,
         write_only=True,

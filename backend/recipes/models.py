@@ -10,7 +10,7 @@ from .fields import HEXColor
 class Tag(models.Model):
     """Модель тега для рецепта."""
 
-    color = HEXColor('цвет в HEX', blank=False, unique=True)
+    color = HEXColor('цвет в HEX', max_length=7, blank=False, unique=True)
     name = models.CharField('название', max_length=200,
                             blank=False, unique=True)
     slug = models.SlugField('уникальный slug', max_length=200,
@@ -44,11 +44,6 @@ class Ingredient(models.Model):
     def __str__(self):
         return f'{self.name} ({self.measurement_unit})'
 
-    def save(self, *args, **kwargs):
-        self.measurement_unit = self.measurement_unit.casefold()
-        self.name = self.name.capitalize()
-        return super(Ingredient, self).save(*args, **kwargs)
-
 
 class Recipe(models.Model):
     """Модель рецепта."""
@@ -66,6 +61,7 @@ class Recipe(models.Model):
         User,
         related_name='favorites',
         verbose_name='избранное',
+        blank=True,
     )
     image = models.ImageField('картинка', upload_to='recipes/', blank=False)
     ingredients = models.ManyToManyField(
@@ -78,6 +74,7 @@ class Recipe(models.Model):
         User,
         related_name='shopping_cart',
         verbose_name='корзина',
+        blank=True,
     )
     tags = models.ManyToManyField(
         Tag,

@@ -13,6 +13,7 @@ from rest_framework.throttling import UserRateThrottle
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
+from recipes.commons import change_object_status
 from .models import User
 from .serializers import PasswordSerializer, TokenSerializer, UserSerializer
 
@@ -23,7 +24,7 @@ class UserViewSet(CreateModelMixin, ListModelMixin,
 
     permission_classes = (AllowAny,)
     serializer_class = UserSerializer
-    queryset = User.objects.only("email", "username", "first_name", "last_name").all()
+    queryset = User.objects.only("email", "username", "first_name", "last_name")
 
     def perform_create(self, serializer):
         """Присвоение зашифрованного пароля пользователю при отправке POST запроса."""
@@ -48,6 +49,28 @@ class UserViewSet(CreateModelMixin, ListModelMixin,
         request.user.save()
         update_session_auth_hash(request, self.request.user)
         return Response(status=HTTP_204_NO_CONTENT)
+
+    @action(['POST', 'DELETE'], detail=True, permission_classes=(IsAuthenticated,))
+    def subscribe(self, request, pk):
+        """Изменить статус подписки."""
+        instance = self.get_object()
+        response = change_object_status(instance, request, 'subscribed_by')
+        return response
+
+    @action(['GET'], detail=False, permission_classes=(IsAuthenticated,))
+    def subscriptions(self, request):
+        """Получить список подписок с рецептами."""
+        queryset = (request.user.subscribed_to
+                    .prefetch_related('subscribed_to')
+                    .prefetch_related('recipe_set'))
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class TokenObtainView(ObtainAuthToken):

@@ -26,6 +26,10 @@ class IngredientSerializer(serializers.ModelSerializer):
 class RecipeIngredientAmountSerializer(serializers.ModelSerializer):
     """Сериализатор для связки рецепта, ингредиента и количества."""
 
+    default_error_messages = {
+        'nonexistent': 'Несуществующий ингредиент!',
+    }
+
     id = serializers.IntegerField(source='ingredient.id')
     name = serializers.CharField(source='ingredient.name', read_only=True)
     measurement_unit = serializers.CharField(
@@ -37,9 +41,19 @@ class RecipeIngredientAmountSerializer(serializers.ModelSerializer):
         model = RecipeIngredientAmount
         fields = ('id', 'name', 'measurement_unit', 'amount')
 
+    def validate_id(self, id):
+        """Валидировать id. Должен существовать."""
+        if Ingredient.objects.filter(id=id).exists():
+            return id
+        self.fail('nonexistent')
+
 
 class RecipeSerializer(serializers.ModelSerializer):
     """Сериализатор для модели рецепта."""
+
+    default_error_messages = {
+        'duplicate': 'Ингредиенты не могут повторяться!',
+    }
 
     author = UserSerializer(read_only=True)
     image = Base64ImageField()
@@ -62,16 +76,25 @@ class RecipeSerializer(serializers.ModelSerializer):
         fields = ('id', 'tags', 'author', 'ingredients', 'is_favorited',
                   'is_in_shopping_cart', 'name', 'image', 'text', 'cooking_time')
 
-    def get_is_favorited(self, object):
+    def get_is_favorited(self, obj):
         """Проверить наличие рецепта в избранных пользователя."""
-        request = self.context.get("request")
+        request = self.context.get('request')
         if request.user.is_anonymous:
             return False
-        return request.user.favorites.filter(id=object.id).exists()
+        return request.user.favorites.filter(id=obj.id).exists()
 
-    def get_is_in_shopping_cart(self, object):
+    def get_is_in_shopping_cart(self, obj):
         """Проверить наличие рецепта в списке покупок пользователя."""
-        request = self.context.get("request")
+        request = self.context.get('request')
         if request.user.is_anonymous:
             return False
-        return request.user.shopping_cart.filter(id=object.id).exists()
+        return request.user.shopping_cart.filter(id=obj.id).exists()
+
+    def validate_ingredients(self, data):
+        """Валидировать id ингредиентов. Не должны повторяться."""
+        id_list = [elem['ingredient']['id'] for elem in data]
+        id_set = set(id_list)
+
+        if len(id_list) == len(id_set):
+            return data
+        self.fail('duplicate')
