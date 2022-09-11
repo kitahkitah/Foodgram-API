@@ -11,57 +11,54 @@
 
 
 ## Для работы с проектом локально необходимо выполнитье следующие действия:
-<ol>
-  <li>Склонировать репозиторий</li>
-  ```
-  git clone git@github.com:kitah-ru/foodgram-project-react.git
-  ```
-  <li>Создать вирутальное окружение и установить зависимости</li>
-  ```
-  python -m venv .venv
-  pip install -r backend/requirements.txt
-  ```
-  <li>Выполнить миграции, собрать статику, создать суперпользователя, загрузить ингредиенты</li>
-  ```
-  python manage.py migrate
-  python manage.py collectstatic
-  python manage.py createsuperuser
-  python manage.py importcsv
-  ```
-</ol>
+
+1. Склонировать репозиторий
+```
+git clone git@github.com:kitah-ru/foodgram-project-react.git
+```
+2. Создать вирутальное окружение и установить зависимости
+```
+python -m venv .venv
+pip install -r backend/requirements.txt
+```
+3. Выполнить миграции, собрать статику, создать суперпользователя, загрузить ингредиенты
+```
+python manage.py migrate
+python manage.py collectstatic
+python manage.py createsuperuser
+python manage.py importcsv
+```
 
 
 ## Для разворачивания проекта на сервере наобходимо:
-<ol>
-  <li>Установить на сервере docker и docker-compose</li>
-  ```
-  https://docs.docker.com/engine/install/ubuntu/
-  ```
-  <li>При необходимости создать в директории с compose.yml файл .env</li>
-  ```
-  SECRET_KEY=...
-  DEBUG=False
-  ALLOWED_HOSTS=backend 127.0.0.1 [::]
+1. Установить на сервере docker и docker-compose
+```
+https://docs.docker.com/engine/install/ubuntu/
+```
+2. При необходимости создать в директории с compose.yml файл .env
+```
+SECRET_KEY=...
+DEBUG=False
+ALLOWED_HOSTS=backend 127.0.0.1 [::]
 
-  DB_ENGINE=django.db.backends.postgresql
-  DB_NAME=...
-  POSTGRES_USER=...
-  POSTGRES_PASSWORD=...
-  DB_HOST=db
-  DB_PORT=...
-  ```
-  <li>Собрать docker compose (миграции и сбор статики произойдут автоматически)</li>
-  ```
-  docker compose up -d --build
-  ```
-  <li>При необходимости создать суперпользователя и загрузить ингредиенты</li>
-  ```
-  docker exec -it container_name bash
-  python3 manage.py createsuperuser
-  python3 manage.py importcsv
-  exit
-  ```
-</ol>
+DB_ENGINE=django.db.backends.postgresql
+DB_NAME=...
+POSTGRES_USER=...
+POSTGRES_PASSWORD=...
+DB_HOST=db
+DB_PORT=...
+```
+3. Собрать docker compose (миграции и сбор статики произойдут автоматически)
+```
+docker compose up -d --build
+```
+4. При необходимости создать суперпользователя и загрузить ингредиенты
+```
+docker exec -it container_name bash
+python3 manage.py createsuperuser
+python3 manage.py importcsv
+exit
+```
 
 
 # Для Алексея:
