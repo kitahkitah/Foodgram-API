@@ -7,6 +7,8 @@ Foodgram, «Продуктовый помощник». На этом серви�
 # Для Алексея:
 сервер: 130.193.55.163
 
-superuser: alexey
-pass: horoshegodnya
-email: admin@admin.admin
+<ul>
+  <li>superuser: alexey</li>
+  <li>pass: horoshegodnya</li>
+  <li>email: admin@admin.admin</li>
+</ul>
