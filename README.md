@@ -13,21 +13,21 @@
 ## Для работы с проектом локально необходимо выполнитье следующие действия:
 <ol>
   <li>Склонировать репозиторий</li>
-  ```
+  '''
   git clone git@github.com:kitah-ru/foodgram-project-react.git
-  ```
+  '''
   <li>Создать вирутальное окружение и установить зависимости</li>
-  ```
+  '''
   python -m venv .venv
   pip install -r backend/requirements.txt
-  ```
+  '''
   <li>Выполнить миграции, собрать статику, создать суперпользователя, загрузить ингредиенты</li>
-  ```
+  '''
   python manage.py migrate
   python manage.py collectstatic
   python manage.py createsuperuser
   python manage.py importcsv
-  ```
+  '''
 </ol>
 
 
