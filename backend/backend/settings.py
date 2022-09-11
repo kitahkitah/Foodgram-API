@@ -4,7 +4,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'nonsecure')
-DEBUG = DEBUG = bool(os.getenv('DEBUG', 'False'))
+DEBUG = bool(os.getenv('DEBUG', 'False'))
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1 [::]').split()
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://*.127.0.0.1 http://*.127.0.0.1').split()
 

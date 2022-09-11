@@ -78,7 +78,6 @@ class TokenObtainView(ObtainAuthToken):
 
     permission_classes = (AllowAny,)
     serializer_class = TokenSerializer
-    throttle_classes = (UserRateThrottle,)
 
     def post(self, request, *args, **kwargs):
         """Получение токена пользователя при отправке POST запроса."""

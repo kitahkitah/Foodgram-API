@@ -2,8 +2,13 @@
 
 from django_filters.rest_framework import (AllValuesMultipleFilter, BooleanFilter,
                                            FilterSet)
+from rest_framework.filters import SearchFilter
 
 from .models import Recipe
+
+
+class IngredientsSearch(SearchFilter):
+    search_param = 'name'
 
 
 class RecipeFilterSet(FilterSet):

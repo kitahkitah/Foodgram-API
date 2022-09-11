@@ -9,12 +9,11 @@ from reportlab.pdfgen.canvas import Canvas
 from django.http import FileResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
-from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from .commons import change_object_status
-from .filters import RecipeFilterSet
+from .filters import IngredientsSearch, RecipeFilterSet
 from .models import Ingredient, Recipe, RecipeIngredientAmount, Tag
 from .permissions import IsAuthorOrGetObjectOnly
 from .serializers import IngredientSerializer, RecipeSerializer, TagSerializer
@@ -31,7 +30,7 @@ class TagViewSet(ReadOnlyModelViewSet):
 class IngredientViewSet(ReadOnlyModelViewSet):
     """Вьюсет для эндпоинтов с тегами."""
 
-    filter_backends = (SearchFilter,)
+    filter_backends = (IngredientsSearch,)
     pagination_class = None
     search_fields = ('^name',)
     serializer_class = IngredientSerializer
