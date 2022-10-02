@@ -35,6 +35,7 @@ python manage.py importcsv
 ```
 https://docs.docker.com/engine/install/ubuntu/
 ```
+
 2. При необходимости создать в директории с compose.yml файл .env (пример можно посмотреть в example.env)
 
 3. Собрать docker compose (миграции и сбор статики произойдут автоматически)
