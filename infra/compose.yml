@@ -9,7 +9,9 @@ services:
       - ./.env
 
   backend:
-    image: kitahkitah/foodgram_backend:latest
+    build:
+      context: ../backend/
+    # image: kitahkitah/foodgram_backend:latest
     restart: on-failure
     volumes:
       - static_value:/app/static/
@@ -24,7 +26,9 @@ services:
             gunicorn backend.wsgi:application --bind 0:8000"
 
   frontend:
-    image: kitahkitah/foodgram_frontend:latest
+    build:
+      context: ../frontend/
+    # image: kitahkitah/foodgram_frontend:latest
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
